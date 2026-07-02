@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
-use App\Http\Resources\UserResource;
-use App\Models\User;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Resources\UserResource;
+use App\Models\User;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\JWTGuard;
 
@@ -27,9 +27,9 @@ class AuthService
 
             'message' => 'Register success',
 
-            'token' => $token,  
+            'token' => $token,
 
-            'user' => new UserResource($user)
+            'user' => new UserResource($user),
 
         ], 201);
     }
@@ -38,13 +38,13 @@ class AuthService
     {
         $credentials = $request->only('email', 'password');
 
-        if (!$token = $this->guard()->attempt($credentials)) {
+        if (! $token = $this->guard()->attempt($credentials)) {
 
             return response()->json([
 
                 'success' => false,
 
-                'message' => 'Email atau password salah'
+                'message' => 'Email atau password salah',
 
             ], 401);
         }
@@ -57,7 +57,7 @@ class AuthService
 
             'token' => $token,
 
-            'user' => new UserResource($this->guard()->user())
+            'user' => new UserResource($this->guard()->user()),
 
         ]);
     }
@@ -68,7 +68,7 @@ class AuthService
 
             'success' => true,
 
-            'user' => new UserResource($this->guard()->user())
+            'user' => new UserResource($this->guard()->user()),
 
         ]);
     }
@@ -81,7 +81,7 @@ class AuthService
 
             'success' => true,
 
-            'message' => 'Logout success'
+            'message' => 'Logout success',
 
         ]);
     }
@@ -92,7 +92,7 @@ class AuthService
 
             'success' => true,
 
-            'token' => $this->guard()->refresh()
+            'token' => $this->guard()->refresh(),
 
         ]);
     }
