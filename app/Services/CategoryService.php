@@ -4,9 +4,9 @@ namespace App\Services;
 
 use App\Http\Requests\Category\StoreCategoryRequest;
 use App\Http\Requests\Category\UpdateCategoryRequest;
-use App\Http\Resources\CategoryResource;
 use App\Interfaces\CategoryRepositoryInterface;
 use App\Models\Category;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
 
 class CategoryService
@@ -15,65 +15,35 @@ class CategoryService
         protected CategoryRepositoryInterface $categoryRepository
     ) {}
 
-    public function index()
+    public function getAll(): Collection
     {
-        $categories = $this->categoryRepository->getAllOrderedByName();
-
-        return response()->json([
-            'success' => true,
-            'data'    => CategoryResource::collection($categories),
-        ]);
+        return $this->categoryRepository->getAllOrderedByName();
     }
 
-    public function store(StoreCategoryRequest $request)
+    public function create(StoreCategoryRequest $request): Category
     {
-        $category = $this->categoryRepository->create([
-            'name'        => $request->name,
-            'slug'        => Str::slug($request->name),
-            'description' => $request->description,
+        return $this->categoryRepository->create([
+            'name'        => $request->string('name')->toString(),
+            'slug'        => Str::slug($request->string('name')->toString()),
+            'description' => $request->input('description'),
             'is_active'   => $request->boolean('is_active', true),
         ]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Category created',
-            'data'    => new CategoryResource($category),
-        ], 201);
     }
 
-    public function show(Category $category)
+    public function update(UpdateCategoryRequest $request, Category $category): Category
     {
-        return response()->json([
-            'success' => true,
-            'data'    => new CategoryResource($category),
-        ]);
-    }
-
-    public function update(UpdateCategoryRequest $request, Category $category)
-    {
-        $updated = $this->categoryRepository->update($category, [
-            'name'        => $request->name,
-            'slug'        => Str::slug($request->name),
-            'description' => $request->description ?? $category->description,
+        return $this->categoryRepository->update($category, [
+            'name'        => $request->string('name')->toString(),
+            'slug'        => Str::slug($request->string('name')->toString()),
+            'description' => $request->input('description') ?? $category->description,
             'is_active'   => $request->has('is_active')
                 ? $request->boolean('is_active')
                 : $category->is_active,
         ]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Category updated',
-            'data'    => new CategoryResource($updated),
-        ]);
     }
 
-    public function destroy(Category $category)
+    public function delete(Category $category): void
     {
         $this->categoryRepository->delete($category);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Category deleted',
-        ]);
     }
 }

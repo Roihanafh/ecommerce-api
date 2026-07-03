@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\Category\StoreCategoryRequest;
 use App\Http\Requests\Category\UpdateCategoryRequest;
+use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use App\Services\CategoryService;
+use Illuminate\Http\JsonResponse;
 use OpenApi\Attributes as OA;
 
-class CategoryController extends Controller
+class CategoryController extends BaseApiController
 {
     public function __construct(
         protected CategoryService $categoryService
@@ -38,9 +39,11 @@ class CategoryController extends Controller
             new OA\Response(response: 401, description: 'Unauthenticated'),
         ]
     )]
-    public function index()
+    public function index(): JsonResponse
     {
-        return $this->categoryService->index();
+        $categories = $this->categoryService->getAll();
+
+        return $this->successResponse(CategoryResource::collection($categories));
     }
 
     #[OA\Post(
@@ -75,9 +78,11 @@ class CategoryController extends Controller
             new OA\Response(response: 422, description: 'Validation error'),
         ]
     )]
-    public function store(StoreCategoryRequest $request)
+    public function store(StoreCategoryRequest $request): JsonResponse
     {
-        return $this->categoryService->store($request);
+        $category = $this->categoryService->create($request);
+
+        return $this->createdResponse(new CategoryResource($category), 'Category created');
     }
 
     #[OA\Get(
@@ -109,9 +114,9 @@ class CategoryController extends Controller
             new OA\Response(response: 404, description: 'Category not found'),
         ]
     )]
-    public function show(Category $category)
+    public function show(Category $category): JsonResponse
     {
-        return $this->categoryService->show($category);
+        return $this->successResponse(new CategoryResource($category));
     }
 
     #[OA\Put(
@@ -156,9 +161,11 @@ class CategoryController extends Controller
             new OA\Response(response: 422, description: 'Validation error'),
         ]
     )]
-    public function update(UpdateCategoryRequest $request, Category $category)
+    public function update(UpdateCategoryRequest $request, Category $category): JsonResponse
     {
-        return $this->categoryService->update($request, $category);
+        $updated = $this->categoryService->update($request, $category);
+
+        return $this->updatedResponse(new CategoryResource($updated), 'Category updated');
     }
 
     #[OA\Delete(
@@ -190,8 +197,10 @@ class CategoryController extends Controller
             new OA\Response(response: 404, description: 'Category not found'),
         ]
     )]
-    public function destroy(Category $category)
+    public function destroy(Category $category): JsonResponse
     {
-        return $this->categoryService->destroy($category);
+        $this->categoryService->delete($category);
+
+        return $this->messageResponse('Category deleted');
     }
 }

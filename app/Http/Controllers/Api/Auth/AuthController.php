@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Services\AuthService;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Http\JsonResponse;
 use OpenApi\Attributes as OA;
 
-class AuthController extends Controller
+class AuthController extends BaseApiController
 {
     public function __construct(
         protected AuthService $authService
@@ -46,9 +48,16 @@ class AuthController extends Controller
             new OA\Response(response: 422, description: 'Validation error'),
         ]
     )]
-    public function register(RegisterRequest $request)
+    public function register(RegisterRequest $request): JsonResponse
     {
-        return $this->authService->register($request);
+        $result = $this->authService->register($request);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Register success',
+            'token'   => $result['token'],
+            'user'    => $result['user'],
+        ], 201);
     }
 
     #[OA\Post(
@@ -90,9 +99,20 @@ class AuthController extends Controller
             ),
         ]
     )]
-    public function login(LoginRequest $request)
+    public function login(LoginRequest $request): JsonResponse
     {
-        return $this->authService->login($request);
+        try {
+            $result = $this->authService->login($request);
+        } catch (AuthenticationException $e) {
+            return $this->errorResponse($e->getMessage(), 401);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Login success',
+            'token'   => $result['token'],
+            'user'    => $result['user'],
+        ]);
     }
 
     #[OA\Get(
@@ -114,9 +134,9 @@ class AuthController extends Controller
             new OA\Response(response: 401, description: 'Unauthenticated'),
         ]
     )]
-    public function me()
+    public function me(): JsonResponse
     {
-        return $this->authService->me();
+        return $this->successResponse($this->authService->me(), 'user');
     }
 
     #[OA\Post(
@@ -138,9 +158,11 @@ class AuthController extends Controller
             new OA\Response(response: 401, description: 'Unauthenticated'),
         ]
     )]
-    public function logout()
+    public function logout(): JsonResponse
     {
-        return $this->authService->logout();
+        $this->authService->logout();
+
+        return $this->messageResponse('Logout success');
     }
 
     #[OA\Post(
@@ -162,8 +184,8 @@ class AuthController extends Controller
             new OA\Response(response: 401, description: 'Unauthenticated'),
         ]
     )]
-    public function refresh()
+    public function refresh(): JsonResponse
     {
-        return $this->authService->refresh();
+        return $this->successResponse($this->authService->refresh(), 'token');
     }
 }
