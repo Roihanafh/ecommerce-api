@@ -802,12 +802,12 @@
                     }
                 ]
             },
-            "put": {
+            "post": {
                 "tags": [
                     "Products"
                 ],
-                "summary": "Update a product",
-                "operationId": "d3addbe72313169741e652404694ef9d",
+                "summary": "Update a product (uses POST due to multipart/form-data)",
+                "operationId": "cbb0f54bb4c6f617c9dc73c9f1517dea",
                 "parameters": [
                     {
                         "name": "id",
