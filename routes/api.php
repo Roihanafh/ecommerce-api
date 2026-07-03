@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Auth\AuthController;
+use App\Http\Controllers\Api\CategoryController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -22,5 +23,9 @@ Route::prefix('v1')->group(function () {
         });
 
     });
+
+    Route::middleware('auth:api')->group(function () {
+    });
+    Route::apiResource('categories', CategoryController::class);
 
 });
