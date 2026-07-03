@@ -6,7 +6,6 @@ use App\Http\Controllers\Api\BaseApiController;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Services\AuthService;
-use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\JsonResponse;
 use OpenApi\Attributes as OA;
 
@@ -101,11 +100,7 @@ class AuthController extends BaseApiController
     )]
     public function login(LoginRequest $request): JsonResponse
     {
-        try {
-            $result = $this->authService->login($request);
-        } catch (AuthenticationException $e) {
-            return $this->errorResponse($e->getMessage(), 401);
-        }
+        $result = $this->authService->login($request);
 
         return response()->json([
             'success' => true,
