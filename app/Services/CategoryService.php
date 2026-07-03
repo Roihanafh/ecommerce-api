@@ -23,20 +23,20 @@ class CategoryService
     public function create(StoreCategoryRequest $request): Category
     {
         return $this->categoryRepository->create([
-            'name'        => $request->string('name')->toString(),
-            'slug'        => Str::slug($request->string('name')->toString()),
+            'name' => $request->string('name')->toString(),
+            'slug' => Str::slug($request->string('name')->toString()),
             'description' => $request->input('description'),
-            'is_active'   => $request->boolean('is_active', true),
+            'is_active' => $request->boolean('is_active', true),
         ]);
     }
 
     public function update(UpdateCategoryRequest $request, Category $category): Category
     {
         return $this->categoryRepository->update($category, [
-            'name'        => $request->string('name')->toString(),
-            'slug'        => Str::slug($request->string('name')->toString()),
+            'name' => $request->string('name')->toString(),
+            'slug' => Str::slug($request->string('name')->toString()),
             'description' => $request->input('description') ?? $category->description,
-            'is_active'   => $request->has('is_active')
+            'is_active' => $request->has('is_active')
                 ? $request->boolean('is_active')
                 : $category->is_active,
         ]);

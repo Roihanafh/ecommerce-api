@@ -15,8 +15,8 @@ class AuthService
     public function register(RegisterRequest $request): array
     {
         $user = User::create([
-            'name'     => $request->string('name')->toString(),
-            'email'    => $request->string('email')->toString(),
+            'name' => $request->string('name')->toString(),
+            'email' => $request->string('email')->toString(),
             'password' => $request->string('password')->toString(),
         ]);
 
@@ -24,7 +24,7 @@ class AuthService
 
         return [
             'token' => $token,
-            'user'  => new UserResource($user),
+            'user' => new UserResource($user),
         ];
     }
 
@@ -41,7 +41,7 @@ class AuthService
 
         return [
             'token' => $token,
-            'user'  => new UserResource($this->guard()->user()),
+            'user' => new UserResource($this->guard()->user()),
         ];
     }
 

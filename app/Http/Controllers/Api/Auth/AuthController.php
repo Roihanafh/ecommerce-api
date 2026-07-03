@@ -54,8 +54,8 @@ class AuthController extends BaseApiController
         return response()->json([
             'success' => true,
             'message' => 'Register success',
-            'token'   => $result['token'],
-            'user'    => $result['user'],
+            'token' => $result['token'],
+            'user' => $result['user'],
         ], 201);
     }
 
@@ -105,8 +105,8 @@ class AuthController extends BaseApiController
         return response()->json([
             'success' => true,
             'message' => 'Login success',
-            'token'   => $result['token'],
-            'user'    => $result['user'],
+            'token' => $result['token'],
+            'user' => $result['user'],
         ]);
     }
 

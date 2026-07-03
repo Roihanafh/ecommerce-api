@@ -28,9 +28,9 @@ class CategorySeeder extends Seeder
             Category::firstOrCreate(
                 ['slug' => Str::slug($category['name'])],
                 [
-                    'name'        => $category['name'],
+                    'name' => $category['name'],
                     'description' => $category['description'],
-                    'is_active'   => true,
+                    'is_active' => true,
                 ]
             );
         }

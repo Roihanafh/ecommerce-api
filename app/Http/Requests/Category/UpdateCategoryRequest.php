@@ -20,9 +20,9 @@ class UpdateCategoryRequest extends FormRequest
         $categoryId = $this->route('category')?->id;
 
         return [
-            'name'        => "required|string|max:100|unique:categories,name,{$categoryId}",
+            'name' => "required|string|max:100|unique:categories,name,{$categoryId}",
             'description' => 'nullable|string',
-            'is_active'   => 'boolean',
+            'is_active' => 'boolean',
         ];
     }
 }

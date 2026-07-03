@@ -11,7 +11,7 @@ class BaseApiController extends Controller
     {
         return response()->json([
             'success' => true,
-            $key      => $data,
+            $key => $data,
         ], $status);
     }
 
@@ -20,7 +20,7 @@ class BaseApiController extends Controller
         return response()->json([
             'success' => true,
             'message' => $message,
-            $key      => $data,
+            $key => $data,
         ], 201);
     }
 
@@ -37,7 +37,7 @@ class BaseApiController extends Controller
         return response()->json([
             'success' => true,
             'message' => $message,
-            $key      => $data,
+            $key => $data,
         ]);
     }
 

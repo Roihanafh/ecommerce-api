@@ -27,6 +27,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(function (ModelNotFoundException $e, Request $request) {
             if ($request->is('api/*')) {
                 $model = class_basename($e->getModel());
+
                 return response()->json([
                     'success' => false,
                     'message' => "{$model} not found.",
@@ -80,7 +81,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 return response()->json([
                     'success' => false,
                     'message' => 'Validation failed.',
-                    'errors'  => $e->errors(),
+                    'errors' => $e->errors(),
                 ], 422);
             }
         });
