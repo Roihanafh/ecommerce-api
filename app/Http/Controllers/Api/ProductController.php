@@ -102,9 +102,9 @@ class ProductController extends BaseApiController
         return $this->successResponse(new ProductResource($product));
     }
 
-    #[OA\Put(
+    #[OA\Post(
         path: '/api/v1/products/{id}',
-        summary: 'Update a product',
+        summary: 'Update a product (uses POST due to multipart/form-data)',
         security: [['bearerAuth' => []]],
         requestBody: new OA\RequestBody(
             required: true,

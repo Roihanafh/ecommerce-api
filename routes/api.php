@@ -27,6 +27,9 @@ Route::prefix('v1')->group(function () {
 
     Route::middleware('auth:api')->group(function () {});
     Route::apiResource('categories', CategoryController::class);
-    Route::apiResource('products', ProductController::class);
+
+    // products: update pakai POST karena PHP tidak parse multipart/form-data pada PUT
+    Route::apiResource('products', ProductController::class)->except(['update']);
+    Route::post('products/{product}', [ProductController::class, 'update']);
 
 });
