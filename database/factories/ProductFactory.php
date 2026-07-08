@@ -18,13 +18,13 @@ class ProductFactory extends Factory
 
         return [
             'category_id' => Category::factory(),
-            'name'        => $name,
-            'slug'        => Str::slug($name),
+            'name' => $name,
+            'slug' => Str::slug($name),
             'description' => $this->faker->optional()->paragraph(),
-            'price'       => $this->faker->randomFloat(2, 10000, 50000000),
-            'stock'       => $this->faker->numberBetween(0, 500),
-            'image'       => null,
-            'is_active'   => $this->faker->boolean(80),
+            'price' => $this->faker->randomFloat(2, 10000, 50000000),
+            'stock' => $this->faker->numberBetween(0, 500),
+            'image' => null,
+            'is_active' => $this->faker->boolean(80),
         ];
     }
 }

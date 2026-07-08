@@ -15,7 +15,7 @@ class ProductRepository implements ProductRepositoryInterface
             ->when($filters['search'] ?? null, function ($q, $search) {
                 $q->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%")
-                      ->orWhere('description', 'like', "%{$search}%");
+                        ->orWhere('description', 'like', "%{$search}%");
                 });
             })
             ->when($filters['category_id'] ?? null, function ($q, $categoryId) {
