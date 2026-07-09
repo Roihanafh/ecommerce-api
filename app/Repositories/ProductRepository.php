@@ -8,6 +8,11 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class ProductRepository implements ProductRepositoryInterface
 {
+    public function findById(int $id): Product
+    {
+        return Product::findOrFail($id);
+    }
+
     public function paginate(array $filters): LengthAwarePaginator
     {
         return Product::query()

@@ -2,40 +2,43 @@
 
 namespace App\Services;
 
-use App\Enums\CartStatus;
 use App\Http\Requests\Cart\AddToCartRequest;
 use App\Http\Requests\Cart\UpdateCartRequest;
+use App\Interfaces\CartItemRepositoryInterface;
+use App\Interfaces\CartRepositoryInterface;
+use App\Interfaces\ProductRepositoryInterface;
 use App\Models\Cart;
 use App\Models\CartItem;
-use App\Models\Product;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class CartService
 {
+    public function __construct(
+        protected CartRepositoryInterface $cartRepository,
+        protected CartItemRepositoryInterface $cartItemRepository,
+        protected ProductRepositoryInterface $productRepository,
+    ) {}
+
     public function getOrCreateCart(): Cart
     {
         /** @var User $user */
         $user = Auth::user();
 
-        return $user->carts()
-            ->where('status', CartStatus::Active)
-            ->firstOrCreate(
-                ['user_id' => $user->id, 'status' => CartStatus::Active->value],
-            );
+        return $this->cartRepository->findActiveByUser($user)
+            ?? $this->cartRepository->create($user);
     }
 
     public function index(): Cart
     {
         $cart = $this->getOrCreateCart();
-        $cart->load('items.product');
 
-        return $cart;
+        return $this->cartRepository->loadWithItems($cart);
     }
 
     public function store(AddToCartRequest $request): array
     {
-        $product = Product::findOrFail($request->input('product_id'));
+        $product = $this->productRepository->findById((int) $request->input('product_id'));
         $quantity = (int) $request->input('quantity');
 
         // validasi stok
@@ -47,7 +50,7 @@ class CartService
         }
 
         $cart = $this->getOrCreateCart();
-        $existing = $cart->items()->where('product_id', $product->id)->first();
+        $existing = $this->cartItemRepository->findByCartAndProduct($cart, $product->id);
 
         if ($existing) {
             $newQty = $existing->quantity + $quantity;
@@ -59,17 +62,12 @@ class CartService
                 ];
             }
 
-            $existing->update(['quantity' => $newQty]);
+            $this->cartItemRepository->updateQuantity($existing, $newQty);
         } else {
-            $cart->items()->create([
-                'product_id' => $product->id,
-                'quantity' => $quantity,
-            ]);
+            $this->cartItemRepository->create($cart, $product->id, $quantity);
         }
 
-        $cart->load('items.product');
-
-        return ['cart' => $cart];
+        return ['cart' => $this->cartRepository->loadWithItems($cart)];
     }
 
     public function update(UpdateCartRequest $request, CartItem $cartItem): array
@@ -84,7 +82,7 @@ class CartService
             ];
         }
 
-        $cartItem->update(['quantity' => $quantity]);
+        $cartItem = $this->cartItemRepository->updateQuantity($cartItem, $quantity);
         $cartItem->load('product');
 
         return ['item' => $cartItem];
@@ -92,13 +90,13 @@ class CartService
 
     public function destroy(CartItem $cartItem): void
     {
-        $cartItem->delete();
+        $this->cartItemRepository->delete($cartItem);
     }
 
     public function clear(): void
     {
         $cart = $this->getOrCreateCart();
-        $cart->items()->delete();
+        $this->cartItemRepository->deleteAllByCart($cart);
     }
 
     public function calculateTotal(Cart $cart): float
