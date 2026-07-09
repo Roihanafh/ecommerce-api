@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Auth\AuthController;
+use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\ProductController;
 use Illuminate\Support\Facades\Route;
@@ -25,11 +26,19 @@ Route::prefix('v1')->group(function () {
 
     });
 
-    Route::middleware('auth:api')->group(function () {});
-    Route::apiResource('categories', CategoryController::class);
+    Route::middleware('auth:api')->group(function () {
 
-    // products: update pakai POST karena PHP tidak parse multipart/form-data pada PUT
-    Route::apiResource('products', ProductController::class)->except(['update']);
-    Route::post('products/{product}', [ProductController::class, 'update']);
+        Route::apiResource('categories', CategoryController::class);
+
+        // products: update pakai POST karena PHP tidak parse multipart/form-data pada PUT
+        Route::apiResource('products', ProductController::class)->except(['update']);
+        Route::post('products/{product}', [ProductController::class, 'update']);
+
+        Route::get('/cart', [CartController::class, 'index']);
+        Route::post('/cart', [CartController::class, 'store']);
+        Route::put('/cart/{cartItem}', [CartController::class, 'update']);
+        Route::delete('/cart/{cartItem}', [CartController::class, 'destroy']);
+        Route::delete('/cart', [CartController::class, 'clear']);
+    });
 
 });
