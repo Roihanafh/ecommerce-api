@@ -62,4 +62,9 @@ class ProductRepository implements ProductRepositoryInterface
     {
         $product->delete();
     }
+
+    public function decreaseStock(Product $product, int $quantity): void
+    {
+        $product->decrement('stock', $quantity);
+    }
 }

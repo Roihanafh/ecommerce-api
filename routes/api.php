@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\CheckoutController;
 use App\Http\Controllers\Api\ProductController;
 use Illuminate\Support\Facades\Route;
 
@@ -39,6 +40,10 @@ Route::prefix('v1')->group(function () {
         Route::put('/cart/{cartItem}', [CartController::class, 'update']);
         Route::delete('/cart/{cartItem}', [CartController::class, 'destroy']);
         Route::delete('/cart', [CartController::class, 'clear']);
+
+        Route::post('/checkout', [CheckoutController::class, 'checkout']);
+        Route::get('/orders', [CheckoutController::class, 'history']);
+        Route::get('/orders/{id}', [CheckoutController::class, 'show']);
     });
 
 });
