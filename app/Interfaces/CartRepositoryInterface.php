@@ -2,7 +2,6 @@
 
 namespace App\Interfaces;
 
-use App\Enums\CartStatus;
 use App\Models\Cart;
 use App\Models\User;
 
