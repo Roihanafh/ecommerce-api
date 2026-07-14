@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\CheckoutController;
+use App\Http\Controllers\Api\MidtransWebhookController;
 use App\Http\Controllers\Api\ProductController;
 use Illuminate\Support\Facades\Route;
 
@@ -44,6 +45,11 @@ Route::prefix('v1')->group(function () {
         Route::post('/checkout', [CheckoutController::class, 'checkout']);
         Route::get('/orders', [CheckoutController::class, 'history']);
         Route::get('/orders/{id}', [CheckoutController::class, 'show']);
+
+        Route::post('/payments/{order}', [CheckoutController::class, 'pay']);
     });
+
+    // Midtrans webhook — tidak butuh auth JWT, diverifikasi via signature_key
+    Route::post('/webhooks/midtrans', [MidtransWebhookController::class, 'notify']);
 
 });

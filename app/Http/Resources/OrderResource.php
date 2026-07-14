@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use OpenApi\Attributes as OA;
@@ -24,6 +25,12 @@ use OpenApi\Attributes as OA;
 )]
 class OrderResource extends JsonResource
 {
+    /** @param Order $resource */
+    public function __construct($resource)
+    {
+        parent::__construct($resource);
+    }
+
     public function toArray(Request $request): array
     {
         return [

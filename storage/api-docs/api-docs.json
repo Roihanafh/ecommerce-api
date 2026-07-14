@@ -939,6 +939,86 @@
                 ]
             }
         },
+        "/api/v1/payments/{order}": {
+            "post": {
+                "tags": [
+                    "Payment"
+                ],
+                "summary": "Create Midtrans Snap payment token for an order",
+                "operationId": "05e71ec418647351b50b0c6354228116",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Snap token created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Payment token created."
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "token": {
+                                                    "type": "string",
+                                                    "example": "xxxxx"
+                                                },
+                                                "redirect_url": {
+                                                    "type": "string",
+                                                    "example": "https://app.sandbox.midtrans.com/..."
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "404": {
+                        "description": "Order not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/payments/notify": {
+            "post": {
+                "tags": [
+                    "Payment"
+                ],
+                "summary": "Midtrans webhook notification handler",
+                "operationId": "ae9fba0fbdd88c0a9ced27e83ef42de1",
+                "responses": {
+                    "200": {
+                        "description": "Notification received"
+                    }
+                }
+            }
+        },
         "/api/v1/products": {
             "get": {
                 "tags": [
@@ -1551,6 +1631,10 @@
         {
             "name": "Checkout",
             "description": "Checkout"
+        },
+        {
+            "name": "Payment",
+            "description": "Payment"
         },
         {
             "name": "Products",
